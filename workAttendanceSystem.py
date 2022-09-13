@@ -770,11 +770,11 @@ class WAS(wx.Frame):
                                                              i] + " Ingresó correctamente y no llegó tarde\r\n")
                                 speak_info(self.knew_name[i] + " Iniciar sesión con éxito ")
                                 self.insertARow([self.knew_id[i], self.knew_name[i], nowdt, "No"], 2)
-                                con = pymysql.connect(db='baseinf', user='root', passwd='', host='localhost', port=3306,
+                                con = pymysql.connect(db='base1', user='root', passwd='', host='localhost', port=3306,
                                                       autocommit=True)
                                 cur = con.cursor()
-                                sql = "INSERT INTO `logcat` (`datetime`, `id`, `name`, `late`) VALUES (%s, %s, %s, %s)"
-                                cur.execute(sql, (nowdt, self.knew_id[i], self.knew_name[i], "No"))
+                                sql = "INSERT INTO `logcat11` (`datetime`, `id`, `name`, `late`, `datetimeSa`, `lateSa`) VALUES (%s, %s, %s, %s, %s, %s)"
+                                cur.execute(sql, (nowdt, self.knew_id[i], self.knew_name[i], "No", "-", "-"))
                             elif offworking >= nowdt[nowdt.index(" ") + 1:-1] >= working:
                                 self.infoText.SetBackgroundColour('Yellow')
                                 self.infoText.AppendText(nowdt + "Número de empleo:" + str(self.knew_id[i])
@@ -782,11 +782,11 @@ class WAS(wx.Frame):
                                                              i] + " Ingresó con éxito, pero llegó tarde\r\n")
                                 speak_info(self.knew_name[i] + " Ingresó con éxito, pero llegó tarde")
                                 self.insertARow([self.knew_id[i], self.knew_name[i], nowdt, "Si"], 2)
-                                con = pymysql.connect(db='baseinf', user='root', passwd='', host='localhost', port=3306,
+                                con = pymysql.connect(db='base1', user='root', passwd='', host='localhost', port=3306,
                                                       autocommit=True)
                                 cur = con.cursor()
-                                sql = "INSERT INTO `logcat` (`datetime`, `id`, `name`, `late`) VALUES (%s, %s, %s, %s)"
-                                cur.execute(sql, (nowdt, self.knew_id[i], self.knew_name[i], "Si"))
+                                sql = "INSERT INTO `logcat11` (`datetime`, `id`, `name`, `late`, `datetimeSa`, `lateSa`) VALUES (%s, %s, %s, %s, %s, %s)"
+                                cur.execute(sql, (nowdt, self.knew_id[i], self.knew_name[i], "Si", "-", "-"))
                             elif nowdt[nowdt.index(" ") + 1:-1] > offworking:
                                 self.infoText.SetBackgroundColour('Red')
                                 self.infoText.AppendText(nowdt + "Número de empleo:" + str(self.knew_id[i])
@@ -902,11 +902,13 @@ class WAS(wx.Frame):
                                                          + " Nombre:" + self.knew_name[i] + "Salio temprano\r\n")
                                 speak_info(self.knew_name[i] + " Salio correctamente pero antes de tiempo ")
                                 self.insertARow([self.knew_id[i], self.knew_name[i], nowdt, "Salio Temprano"], 3)
-                                con = pymysql.connect(db='baseinf', user='root', passwd='', host='localhost', port=3306,
+                                con = pymysql.connect(db='base1', user='root', passwd='', host='localhost', port=3306,
                                                       autocommit=True)
                                 cur = con.cursor()
-                                sql = "INSERT `logsalida` (`datetimeSa`, `id`, `nameSa`, `lateSa`) VALUES (%s, %s, %s, %s)"
-                                cur.execute(sql, (nowdt, self.knew_id[i], self.knew_name[i], "Salio Temprano"))
+
+                                sql = "UPDATE logcat11 set datetimeSa = %s ,lateSa=%s where id=%s order by datetime desc limit 1"
+                                cur.execute(sql, (nowdt, "Si", self.knew_id[i]))
+                                con.commit()
                             elif nowdt[nowdt.index(" ") + 1:-1] >= offworking:
                                 self.infoText.SetBackgroundColour((50, 230, 59))
                                 self.infoText.AppendText(nowdt + "Número de empleo:" + str(self.knew_id[i])
@@ -914,12 +916,12 @@ class WAS(wx.Frame):
                                                              i] + " Salio correctamente\r\n")
                                 speak_info(self.knew_name[i] + "Salio correctamente ")
                                 self.insertARow([self.knew_id[i], self.knew_name[i], nowdt, " Si"], 3)
-                                con = pymysql.connect(db='baseinf', user='root', passwd='', host='localhost', port=3306,
+                                con = pymysql.connect(db='base1', user='root', passwd='', host='localhost', port=3306,
                                                       autocommit=True)
                                 cur = con.cursor()
-                                sql = "INSERT INTO `logsalida` (`datetimeSa`, `id`, `nameSa`, `lateSa`) VALUES (%s, %s, %s, %s)"
-                                cur.execute(sql, (nowdt, self.knew_id[i], self.knew_name[i], "Si"))
-
+                                sql = "UPDATE logcat11 set datetimeSa = %s ,lateSa=%s where id=%s order by datetime desc limit 1"
+                                cur.execute(sql, (nowdt, "Si", self.knew_id[i]))
+                                con.commit()
                             self.loadDataBase(2)
                             break
                     if self.salida_punchcard.IsEnabled():
